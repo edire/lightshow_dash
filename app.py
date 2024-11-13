@@ -41,7 +41,7 @@ def add_song_to_queue(song_queue, song_name):
 def play_song(song_name):
     print("Playing:", song_name)
     song_name = songs[song_name]
-    command = ["python", "/home/pi/lightshowpi/py/synchronized_lights.py", f"--file=/home/pi/lightshowpi/music/christmas/{song_name}.mp3"]
+    command = ["sudo", "python3.7", "/home/pi/lightshowpi/py/synchronized_lights.py", f"--file=/home/pi/lightshowpi/music/christmas/{song_name}.mp3"]
     subprocess.call(command)
     # print(command)
     # time.sleep(10)
@@ -96,6 +96,13 @@ def add_song_webhook():
 @app.route('/current_song', methods=['GET'])
 def get_current_song():
     return current_song if current_song else "No song currently playing."
+
+
+@app.route('/cancel', methods=['GET'])
+def cancel_song():
+    command = ["sudo", "pkill", "python3.7"]
+    subprocess.call(command)
+    return 'done!'
 
 
 #%%

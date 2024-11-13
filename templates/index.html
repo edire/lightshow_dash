@@ -22,6 +22,15 @@
             letter-spacing: 2px;
         }
 
+        p {
+            color: #d32f2f;
+            text-align: center;
+            margin-bottom: 10px;
+            /* font-size: 1rem; */
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
         form {
             max-width: 600px;
             margin: 0 auto;
@@ -112,6 +121,7 @@
 </head>
 <body>
     <h1>Linda Ln Christmas Lightshow</h1>
+    <p>Only available between 5:30p and 8:30p</p>
     <form action="/choose_song" method="post">
         {% for song_name, song_id in songs.items() %}
             <input type="radio" id="song_{{ loop.index }}" name="song" value="{{ song_name }}">
