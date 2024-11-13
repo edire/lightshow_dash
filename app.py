@@ -27,7 +27,7 @@ songs = dict(sorted(songs.items()))
 def check_time():
     current_time = datetime.datetime.now().time()
     start_time = datetime.time(1, 0)
-    end_time = datetime.time(21, 30)
+    end_time = datetime.time(20, 35)
     if start_time <= current_time <= end_time:
         return True
     else:
@@ -41,7 +41,7 @@ def add_song_to_queue(song_queue, song_name):
 def play_song(song_name):
     print("Playing:", song_name)
     song_name = songs[song_name]
-    command = ["sudo", "python", "/home/pi/lightshowpi/py/synchronized_lights.py", f"--file=/home/pi/sales_lightshow/songs/{song_name}.mp3"]
+    command = ["python", "/home/pi/lightshowpi/py/synchronized_lights.py", f"--file=/home/pi/lightshowpi/music/christmas/{song_name}.mp3"]
     subprocess.call(command)
     # print(command)
     # time.sleep(10)
@@ -78,7 +78,7 @@ def choose_song():
         add_song_to_queue(song_queue_requested, selected_song)
         flash(f"Your song '{selected_song}' has been added to the queue!")
     else:
-        flash("Current time is outside the allowed range of 6p - 9p. Song will not be played at this time.")
+        flash("Current time is outside the allowed range of 5:30p - 8:30p. Song will not be played at this time.")
     return redirect(url_for('index'))
 
 

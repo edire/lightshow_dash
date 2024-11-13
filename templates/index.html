@@ -33,10 +33,22 @@
         }
 
         input[type="radio"] {
-            margin-bottom: 20px;
-            font-size: 20px;
-            transform: scale(1.2);
             margin-right: 10px;
+            transform: scale(1.2);
+            float: left;
+            margin-top: 4px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 20px;
+            /* font-size: 15px; */
+            line-height: 1;
+        }
+
+        label span {
+            display: block;
+            margin-left: 30px;  /* Space for the radio button */
         }
 
         input[type="submit"] {
@@ -95,10 +107,11 @@
             margin-bottom: 20px;
             text-align: center;
         }
+
     </style>
 </head>
 <body>
-    <h1>Christmas Song Selection</h1>
+    <h1>Linda Ln Christmas Lightshow</h1>
     <form action="/choose_song" method="post">
         {% for song_name, song_id in songs.items() %}
             <input type="radio" id="song_{{ loop.index }}" name="song" value="{{ song_name }}">
