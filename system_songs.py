@@ -1,9 +1,12 @@
 
+import os
 import requests
 import json
 import random
 import datetime as dt
 
+
+directory = os.path.dirname(os.path.abspath(__file__))
 
 def add_song_to_queue(song_name):
     if song_name not in songs:
@@ -21,7 +24,8 @@ def add_song_to_queue(song_name):
 
 def get_list():
     dt_stamp = dt.datetime.now().strftime('%Y%m%d')
-    with open('playlist.json', 'r') as f:
+    filepath_playlist = os.path.join(directory, 'playlist.json')
+    with open(filepath_playlist, 'r') as f:
         playlist = json.load(f)
     if playlist['dt_stamp'] != dt_stamp:
         playlist = {}
@@ -36,7 +40,7 @@ def get_list():
     songs = playlist['song_list'][playlist['start']:playlist['end']]
     playlist['start'] += 3
     playlist['end'] += 3
-    with open('playlist.json', 'w') as f:
+    with open(filepath_playlist, 'w') as f:
         json.dump(playlist, f)
     return songs
 
