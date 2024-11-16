@@ -122,13 +122,6 @@
 <body>
     <h1>Linda Ln Christmas Lightshow</h1>
     <p>Only available between 5:30p and 8:30p</p>
-    <form action="/choose_song" method="post">
-        {% for song_name, song_id in songs.items() %}
-            <input type="radio" id="song_{{ loop.index }}" name="song" value="{{ song_name }}">
-            <label for="song_{{ loop.index }}">{{ song_name }}</label><br>
-        {% endfor %}
-        <input type="submit" value="Confirm">
-    </form>
 
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -141,6 +134,14 @@
             </div>
         {% endif %}
     {% endwith %}
+
+    <form action="/choose_song" method="post">
+        {% for song_name, song_id in songs.items() %}
+            <input type="radio" id="song_{{ loop.index }}" name="song" value="{{ song_name }}">
+            <label for="song_{{ loop.index }}">{{ song_name }}</label><br>
+        {% endfor %}
+        <input type="submit" value="Confirm">
+    </form>
 
     <div class="queue-container">
         <h2>User Song Queue</h2>

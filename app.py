@@ -26,7 +26,7 @@ songs = dict(sorted(songs.items()))
 
 def check_time():
     current_time = datetime.datetime.now().time()
-    start_time = datetime.time(1, 0)
+    start_time = datetime.time(17, 30)
     end_time = datetime.time(20, 35)
     if start_time <= current_time <= end_time:
         return True
