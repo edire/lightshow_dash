@@ -47,6 +47,7 @@ def play_song(song_name):
     song_name = songs[song_name]
     command = ["sudo", "python3.7", "/home/pi/lightshowpi/py/synchronized_lights.py", f"--file=/home/pi/lightshowpi/music/christmas/{song_name}.mp3"]
     subprocess.call(command)
+    lights_on()
     # print(command)
     # time.sleep(10)
 
