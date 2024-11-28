@@ -19,11 +19,14 @@ os.environ['SYNCHRONIZED_LIGHTS_HOME']='/home/pi/lightshowpi'
 current_song = None
 
 
-with open('songs.json') as f:
-    songs = json.load(f)
-songs = dict(sorted(songs.items()))
-
 #%%
+
+def get_song_list():
+    with open('songs.json') as f:
+        songs = json.load(f)
+    songs = dict(sorted(songs.items()))
+    return songs
+
 
 def check_time():
     current_time = datetime.datetime.now().time()
@@ -119,9 +122,33 @@ def request_song():
     return redirect(url_for('index'))
 
 
+@app.route('/on', methods=['GET'])
+def lights_on():
+    command = ["sudo", "python3.7", "/home/pi/lightshowpi/py/hardware_controller.py", "--state=on"]
+    subprocess.call(command)
+    return 'done!'
+
+
+@app.route('/off', methods=['GET'])
+def lights_off():
+    command = ["sudo", "python3.7", "/home/pi/lightshowpi/py/hardware_controller.py", "--state=off"]
+    subprocess.call(command)
+    return 'done!'
+
+
+@app.route('/git_pull', methods=['GET'])
+def git_pull():
+    global songs
+    command = ["git", "pull"]
+    subprocess.call(command)
+    songs = get_song_list()
+    return 'done!'
+
+
 #%%
 
 if __name__ == '__main__':
+    songs = get_song_list()
     threading.Thread(target=loop_songs, daemon=True).start()
     app.run(debug=False, host='127.0.0.1', port=5000)
 

@@ -9,6 +9,9 @@ cleanup() {
     echo "Reverting ufw rules..."
     sudo ufw delete allow $LOCAL_PORT > /dev/null 2>&1
 
+    # Ensure SSH (port 8822) remains open
+    sudo ufw allow 8822 > /dev/null 2>&1
+
     exit 0
 }
 
@@ -32,6 +35,10 @@ if [[ $? -ne 0 ]]; then
     echo "Failed to configure ufw. Make sure it's installed and configured correctly."
     exit 1
 fi
+
+# Ensure SSH (port 8822) remains open
+echo "Ensuring SSH access on port 8822 is allowed..."
+sudo ufw allow 8822 > /dev/null 2>&1
 
 # Ensure ufw is enabled
 if ! sudo ufw status | grep -q "Status: active"; then
