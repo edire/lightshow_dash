@@ -113,13 +113,14 @@ def cancel_song():
 @app.route('/request', methods=['POST'])
 def request_song():
     song_request = request.form['song_request']
-    SendEmail(to_email_addresses=os.getenv('EMAIL_ADDRESS')
-            , subject=f'LightshowPi Song Request'
-            , body=song_request
-            , user=os.getenv('EMAIL_UID')
-            , password=os.getenv('EMAIL_PWD')
-    )
-    flash(f"Your request, {song_request}, has been submitted.  Please check back later.")
+    if song_request.strip():
+        SendEmail(to_email_addresses=os.getenv('EMAIL_ADDRESS')
+                , subject=f'LightshowPi Song Request'
+                , body=song_request
+                , user=os.getenv('EMAIL_UID')
+                , password=os.getenv('EMAIL_PWD')
+        )
+        flash(f"Your request, {song_request}, has been submitted.  Please check back later.")
     return redirect(url_for('index'))
 
 
