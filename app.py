@@ -8,6 +8,7 @@ import os
 import json
 import datetime
 from demail.gmail import SendEmail
+import datetime as dt
 
 
 app = Flask(__name__)
@@ -81,6 +82,9 @@ def choose_song():
         return redirect(url_for('index'))
     if check_time():
         add_song_to_queue(song_queue_requested, selected_song)
+        with open('song_requests.txt', 'a') as f:
+            timestamp = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            f.write(f"{timestamp} - {selected_song}\n")
         flash(f"Your song '{selected_song}' has been added to the queue!")
     else:
         flash("Current time is outside the allowed range of 5:30p - 8:30p. Song will not be played at this time.")

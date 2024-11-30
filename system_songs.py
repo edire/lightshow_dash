@@ -30,7 +30,7 @@ def get_list():
     if playlist['dt_stamp'] != dt_stamp:
         playlist = {}
         playlist['dt_stamp'] = dt_stamp
-        with open('songs.json', 'r') as f:
+        with open(os.path.join(directory, 'songs.json'), 'r') as f:
             songs = json.load(f)
             song_list = list(songs.keys())
             random_songs = random.sample(song_list, 9)
