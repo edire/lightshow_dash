@@ -145,7 +145,9 @@ def lights_off():
 @app.route('/git_pull', methods=['GET'])
 def git_pull():
     global songs
-    command = ["git", "pull"]
+    command = ["git", "fetch", "origin", "main"]
+    subprocess.call(command)
+    command = ["git", "reset", "--hard", "origin/main"]
     subprocess.call(command)
     songs = get_song_list()
     return 'done!'
