@@ -153,10 +153,12 @@ def git_pull():
     return 'done!'
 
 
+songs = get_song_list()
+
+
 #%%
 
 if __name__ == '__main__':
-    songs = get_song_list()
     threading.Thread(target=loop_songs, daemon=True).start()
     app.run(debug=False, host='127.0.0.1', port=5000)
 
