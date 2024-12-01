@@ -16,7 +16,6 @@ app.secret_key = os.urandom(24)
 
 song_queue_requested = []
 song_queue_system = []
-os.environ['SYNCHRONIZED_LIGHTS_HOME']='/home/pi/lightshowpi'
 current_song = None
 
 
@@ -154,13 +153,13 @@ def git_pull():
 
 
 songs = get_song_list()
+threading.Thread(target=loop_songs, daemon=True).start()
 
 
 #%%
 
 if __name__ == '__main__':
-    threading.Thread(target=loop_songs, daemon=True).start()
-    app.run(debug=False, host='127.0.0.1', port=5000)
+    app.run(debug=True, host='127.0.0.1', port=5000)
 
 
 #%%
