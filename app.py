@@ -16,7 +16,9 @@ app.secret_key = os.urandom(24)
 
 song_queue_requested = []
 song_queue_system = []
+song_queue_admin = []
 current_song = None
+override_key = os.getenv('OVERRIDE_KEY')
 
 
 #%%
@@ -55,11 +57,15 @@ def play_song(song_name):
 def loop_songs():
     global current_song
     while True:
-        if song_queue_requested:
+        override = False
+        if song_queue_admin:
+            current_song = song_queue_admin.pop(0)
+            override = True
+        elif song_queue_requested:
             current_song = song_queue_requested.pop(0)
         elif song_queue_system:
             current_song = song_queue_system.pop(0)
-        if check_time() and current_song:
+        if (check_time() or override) and current_song:
             play_song(current_song)
             current_song = None
         else:
@@ -76,10 +82,21 @@ def index():
 @app.route('/choose_song', methods=['POST'])
 def choose_song():
     selected_song = request.form.get('song')
+
+    referrer_params = request.referrer.split('?')[1] if '?' in request.referrer else ''
+    url_params = dict(param.split('=') for param in referrer_params.split('&') if '=' in param)
+    if 'override' in url_params.keys():
+        override = url_params['override'] == override_key
+    else:
+        override = False
+
     if not selected_song:
         flash("No song selected. Please choose a song.")
         return redirect(url_for('index'))
-    if check_time():
+    if override:
+        add_song_to_queue(song_queue_admin, selected_song)
+        flash(f"Your song '{selected_song}' has been added to the queue!")
+    elif check_time():
         add_song_to_queue(song_queue_requested, selected_song)
         with open('song_requests.txt', 'a') as f:
             timestamp = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
