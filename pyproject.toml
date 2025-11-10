@@ -1,0 +1,15 @@
+[project]
+name = "lightshow-dash"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "demail",
+    "fastapi>=0.121.1",
+    "reflex>=0.8.18",
+    "requests>=2.32.5",
+]
+
+[tool.uv.sources]
+demail = { git = "https://github.com/edire/demail.git" }
