@@ -83,6 +83,7 @@ class State(rx.State):
         self.song_request_text = text
 
 
+@rx.page(route="/")
 def index() -> rx.Component:
     return rx.container(
         rx.vstack(

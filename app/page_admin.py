@@ -2,10 +2,11 @@
 import reflex as rx
 import utils.fpp_commands as fpp
 from typing import List
+from utils.gauth import AuthState, require_auth
 
 
 # Import the song queue manager from index_page to share state
-from app.index_page import song_queue_manager
+from app.page_index import song_queue_manager
 
 
 class AdminState(rx.State):
@@ -89,6 +90,8 @@ class AdminState(rx.State):
         self.update_status()
 
 
+@rx.page(route="/admin", on_load=[AuthState.check_auth])
+@require_auth
 def admin() -> rx.Component:
     """Admin control panel page."""
     return rx.cond(

@@ -6,7 +6,7 @@ import datetime as dt
 import utils.queueing as queueing
 
 
-from app.index_page import song_queue_manager
+from app.page_index import song_queue_manager
 
 
 directory = os.path.dirname(os.path.abspath(__file__))

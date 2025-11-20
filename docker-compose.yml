@@ -1,0 +1,36 @@
+
+services:
+
+  reflex-backend:
+    build:
+      # context: ./app
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    expose:
+      - "8000"
+    env_file:
+      - .env
+    volumes:
+      - /home/edire/volume:/volume
+
+  reflex-frontend:
+    build:
+      # context: ./app
+      dockerfile: Dockerfile.web
+    restart: unless-stopped
+    expose:
+      - "80"
+    env_file:
+      - .env
+    volumes:
+      - /home/edire/volume:/volume
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --config /etc/cloudflared/config.yml run
+    volumes:
+      - ./volume/.cloudflared:/etc/cloudflared
+    restart: unless-stopped
+    depends_on:
+      - reflex-backend
+      - reflex-frontend
