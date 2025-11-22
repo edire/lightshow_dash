@@ -6,6 +6,7 @@ from demail.gmail import SendEmail
 import datetime as dt
 from typing import List
 import utils.queueing as queueing
+from utils.ui_components import song_selector
 
 
 song_queue_manager = queueing.SongQueueManager()
@@ -108,54 +109,13 @@ def index() -> rx.Component:
             ),
 
             # Song Selection
-            rx.box(
-                rx.vstack(
-                    rx.radio(
-                        State.songs.keys(),
-                        value=State.selected_song,
-                        on_change=State.set_selected_song,
-                        direction="column",
-                        size="3",
-                    ),
-                    rx.button(
-                        "Confirm",
-                        on_click=State.choose_song,
-                        width="150px",
-                        height="50px",
-                        font_size="20px",
-                        background_color="#d32f2f",
-                        color="#fff",
-                        border_radius="5px",
-                        font_weight="bold",
-                        _hover={"background_color": "#b61f1f"},
-                        cursor="pointer",
-                    ),
-                    spacing="4",
-                ),
-                width="100%",
-                margin="0 auto",
-                padding="30px",
-                background_color="#fff",
-                border_radius="10px",
-                box_shadow="0 0 20px rgba(0, 0, 0, 0.1)",
-                border="2px solid #d32f2f",
-            ),
-
-            # Flash Message
-            rx.cond(
-                State.flash_message != "",
-                rx.box(
-                    rx.text(
-                        State.flash_message,
-                        color="#cc201a",
-                        text_align="center",
-                        font_size="18px",
-                        font_weight="bold",
-                    ),
-                    max_width="600px",
-                    margin="20px auto",
-                    padding="10px",
-                ),
+            song_selector(
+                songs_dict=State.songs,
+                selected_song=State.selected_song,
+                on_song_change=State.set_selected_song,
+                on_confirm=State.choose_song,
+                flash_message=State.flash_message,
+                heading="",
             ),
 
             # Submit a Request

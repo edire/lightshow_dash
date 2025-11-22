@@ -3,6 +3,8 @@ import reflex as rx
 import utils.fpp_commands as fpp
 from typing import List
 from utils.gauth import AuthState, require_auth
+from utils.ui_components import song_selector
+import utils.queueing as queueing
 
 
 # Import the song queue manager from index_page to share state
@@ -15,23 +17,15 @@ class AdminState(rx.State):
     requested_queue: List[str] = []
     system_queue: List[str] = []
     current_song: str = ""
-
-    @rx.var
-    def is_authenticated(self) -> bool:
-        """Check if user has admin access via query parameter."""
-        try:
-            admin_param = self.router.url.query_parameters.get("admin")
-            if not admin_param:
-                return False
-            return admin_param.lower() == "true"
-        except:
-            return False
+    songs: dict = {}
+    selected_song: str = ""
+    song_flash_message: str = ""
 
     def on_load(self):
         """Load initial data when page loads."""
         try:
-            if self.is_authenticated:
-                self.update_status()
+            self.songs = queueing.get_song_list()
+            self.update_status()
         except:
             pass
 
@@ -89,15 +83,27 @@ class AdminState(rx.State):
         self.flash_message = "System queue cleared"
         self.update_status()
 
+    def set_selected_song(self, song: str):
+        """Set the selected song."""
+        self.selected_song = song
 
-@rx.page(route="/admin", on_load=[AuthState.check_auth])
-@require_auth
+    def choose_song(self):
+        """Add selected song to admin queue."""
+        if not self.selected_song:
+            self.song_flash_message = "No song selected. Please choose a song."
+            return
+        song_queue_manager.add_song(self.selected_song, "admin")
+        self.song_flash_message = f"Song '{self.selected_song}' has been added to the admin queue!"
+        self.update_status()
+        self.selected_song = ""
+
+
+@rx.page(route="/admin", on_load=[AdminState.on_load])
+# @rx.page(route="/admin", on_load=[AuthState.check_auth, AdminState.on_load])
+# @require_auth
 def admin() -> rx.Component:
     """Admin control panel page."""
-    return rx.cond(
-        AdminState.is_authenticated,
-        # Authenticated view
-        rx.container(
+    return rx.container(
             rx.vstack(
                 # Header
                 rx.heading(
@@ -113,8 +119,16 @@ def admin() -> rx.Component:
                     "Linda Ln Christmas Lightshow Administration",
                     color="#333",
                     text_align="center",
-                    margin_bottom="30px",
+                    margin_bottom="10px",
                     font_size="1.2rem",
+                ),
+                rx.text(
+                    "Logged in as: " + AuthState.user_email,
+                    color="#666",
+                    text_align="center",
+                    margin_bottom="20px",
+                    font_size="0.9rem",
+                    font_style="italic",
                 ),
 
                 # Flash Message
@@ -173,6 +187,26 @@ def admin() -> rx.Component:
                     border_radius="10px",
                     box_shadow="0 0 20px rgba(0, 0, 0, 0.1)",
                     border="2px solid #2196f3",
+                ),
+
+                # Song Selection
+                rx.box(
+                    song_selector(
+                        songs_dict=AdminState.songs,
+                        selected_song=AdminState.selected_song,
+                        on_song_change=AdminState.set_selected_song,
+                        on_confirm=AdminState.choose_song,
+                        flash_message=AdminState.song_flash_message,
+                        heading="Add Song to Admin Queue",
+                    ),
+                    width="100%",
+                    max_width="800px",
+                    margin="0 auto 30px auto",
+                    padding="25px",
+                    background_color="#fff",
+                    border_radius="10px",
+                    box_shadow="0 0 20px rgba(0, 0, 0, 0.1)",
+                    border="2px solid #ccc",
                 ),
 
                 # Primary Controls
@@ -426,58 +460,32 @@ def admin() -> rx.Component:
                     border="2px solid #ccc",
                 ),
 
-                # Back to home link
-                rx.link(
-                    "← Back to Home",
-                    href="/",
-                    color="#2196f3",
-                    font_size="1.1rem",
+                # Back to home link and logout
+                rx.hstack(
+                    rx.link(
+                        "← Back to Home",
+                        href="/",
+                        color="#2196f3",
+                        font_size="1.1rem",
+                        _hover={"text_decoration": "underline"},
+                    ),
+                    rx.button(
+                        "Logout",
+                        on_click=AuthState.logout,
+                        background_color="#666",
+                        color="#fff",
+                        padding="8px 16px",
+                        border_radius="5px",
+                        _hover={"background_color": "#555"},
+                        cursor="pointer",
+                    ),
+                    spacing="4",
+                    justify="center",
                     margin_top="30px",
-                    _hover={"text_decoration": "underline"},
                 ),
 
                 spacing="6",
             ),
             padding="20px",
             background_color="#f5f5f5",
-            on_mount=AdminState.on_load,
-        ),
-        # Unauthenticated view
-        rx.container(
-            rx.vstack(
-                rx.heading(
-                    "Access Denied",
-                    font_size="3rem",
-                    color="#d32f2f",
-                    text_align="center",
-                ),
-                rx.text(
-                    "You do not have permission to access this page.",
-                    font_size="1.2rem",
-                    color="#666",
-                    text_align="center",
-                    margin_top="20px",
-                ),
-                rx.text(
-                    "Please contact the administrator if you believe this is an error.",
-                    font_size="1rem",
-                    color="#999",
-                    text_align="center",
-                    margin_top="10px",
-                ),
-                rx.link(
-                    "← Back to Home",
-                    href="/",
-                    color="#2196f3",
-                    font_size="1.1rem",
-                    margin_top="30px",
-                    _hover={"text_decoration": "underline"},
-                ),
-                spacing="4",
-                align="center",
-                justify="center",
-                min_height="100vh",
-            ),
-            background_color="#f5f5f5",
-        ),
-    )
+        )

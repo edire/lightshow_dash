@@ -31,17 +31,24 @@ class AuthState(rx.State):
     refresh_token: str = rx.LocalStorage()
     access_token: str = ""
     stored_email: str = rx.LocalStorage()
+    redirect_after_login: str = rx.LocalStorage()
 
 
     def check_auth(self):
         if not self.is_authenticated:
             if self.refresh_token and self.stored_email:
+                print(f"[AUTH] Attempting to restore session for {self.stored_email}")
                 if self.restore_session(self.refresh_token, self.stored_email):
+                    print(f"[AUTH] Session restored successfully")
                     self.checking_auth = False
                     return
+            # Store the current page to redirect back after login via URL parameter
+            current_path = str(self.router.page.path)
+            print(f"[AUTH] Not authenticated, redirecting to login with next={current_path}")
             self.checking_auth = False
-            return rx.redirect("/login")
+            return rx.redirect(f"/login?next={current_path}")
         else:
+            print(f"[AUTH] Already authenticated as {self.user_email}")
             self.checking_auth = False
 
 
@@ -120,6 +127,13 @@ class AuthState(rx.State):
     def start_oauth_flow(self):
         self.error_message = ""
         try:
+            # Capture the 'next' parameter from the login page URL
+            next_url = self.router.page.params.get("next", "/")
+            print(f"[AUTH] Starting OAuth flow, next={next_url}")
+            print(f"[AUTH] Current redirect_after_login before: {self.redirect_after_login}")
+            self.redirect_after_login = next_url
+            print(f"[AUTH] Stored redirect_after_login: {self.redirect_after_login}")
+
             flow = Flow.from_client_secrets_file(
                 GAUTH_SECRETS_FILE,
                 scopes=SCOPES,
@@ -134,7 +148,7 @@ class AuthState(rx.State):
             return rx.redirect(authorization_url)
         except Exception as e:
             self.error_message = f"OAuth initialization failed: {str(e)}"
-            print(f"Error in start_oauth_flow: {e}")
+            print(f"[AUTH ERROR] start_oauth_flow: {e}")
             return None
 
 
@@ -207,7 +221,13 @@ class AuthState(rx.State):
 
                     # Reset checking_auth for clean page load
                     self.checking_auth = False
-                    return rx.redirect("/")
+
+                    # Redirect to original page or home if no redirect stored
+                    print(f"[AUTH] OAuth successful, current redirect_after_login: {self.redirect_after_login}")
+                    redirect_url = self.redirect_after_login if self.redirect_after_login else "/"
+                    print(f"[AUTH] Redirecting to: {redirect_url}")
+                    self.redirect_after_login = ""  # Clear after use
+                    return rx.redirect(redirect_url)
                 else:
                     self.error_message = f"Access denied. Email '{email}' is not authorized."
                     self.is_authenticated = False
@@ -237,7 +257,7 @@ class AuthState(rx.State):
 def require_auth(page_fn):
     def wrapped_page() -> rx.Component:
         return rx.cond(
-            AuthState.checking_auth | ~AuthState.is_authenticated,
+            AuthState.checking_auth | (AuthState.is_authenticated == False),
             rx.container(
                 rx.vstack(
                     rx.spinner(size="3"),

@@ -11,7 +11,7 @@ services:
     env_file:
       - .env
     volumes:
-      - /home/edire/volume:/volume
+      - ./volume:/volume
 
   reflex-frontend:
     build:
@@ -20,16 +20,18 @@ services:
     restart: unless-stopped
     expose:
       - "80"
+    ports:
+      - "80:80"
     env_file:
       - .env
     volumes:
-      - /home/edire/volume:/volume
+      - ./volume:/volume
 
   cloudflared:
     image: cloudflare/cloudflared:latest
-    command: tunnel --config /etc/cloudflared/config.yml run
+    command: tunnel --config /etc/cloudflared/config_christmas.yml run
     volumes:
-      - ./volume/.cloudflared:/etc/cloudflared
+      - /home/edire/.cloudflared:/etc/cloudflared
     restart: unless-stopped
     depends_on:
       - reflex-backend
