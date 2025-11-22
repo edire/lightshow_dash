@@ -86,26 +86,86 @@ class State(rx.State):
 
 @rx.page(route="/")
 def index() -> rx.Component:
-    return rx.container(
+    return rx.box(
         rx.vstack(
-
-            # Heading
-            rx.heading(
-                "Linda Ln Christmas Lightshow",
-                font_size="3rem",
-                color="#d32f2f",
-                text_align="center",
-                margin_bottom="20px",
-                font_weight="bold",
-                letter_spacing="2px",
-            ),
-            rx.text(
-                "Only available between 5:30p and 8:30p",
-                color="#d32f2f",
-                text_align="center",
-                margin_bottom="10px",
-                font_weight="bold",
-                letter_spacing="1px",
+            # Hero Section with gradient background
+            rx.box(
+                rx.vstack(
+                    # Icon header
+                    rx.hstack(
+                        rx.icon(
+                            "sparkles",
+                            size=48,
+                            color="#10b981",
+                            style={
+                                "filter": "drop-shadow(0 0 20px rgba(16, 185, 129, 0.6))",
+                            },
+                        ),
+                        rx.icon(
+                            "tree-pine",
+                            size=64,
+                            color="#dc2626",
+                            style={
+                                "filter": "drop-shadow(0 0 20px rgba(220, 38, 38, 0.6))",
+                            },
+                        ),
+                        rx.icon(
+                            "sparkles",
+                            size=48,
+                            color="#10b981",
+                            style={
+                                "filter": "drop-shadow(0 0 20px rgba(16, 185, 129, 0.6))",
+                            },
+                        ),
+                        spacing="4",
+                        justify="center",
+                        margin_bottom="20px",
+                    ),
+                    # Main heading with gradient text
+                    rx.heading(
+                        "Linda Ln Christmas Lightshow",
+                        font_size="4rem",
+                        text_align="center",
+                        margin_bottom="15px",
+                        font_weight="900",
+                        letter_spacing="-0.02em",
+                        line_height="1.2",
+                        padding="10px 0",
+                        style={
+                            "background": "linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #10b981 100%)",
+                            "background_clip": "text",
+                            "-webkit-background-clip": "text",
+                            "-webkit-text-fill-color": "transparent",
+                        },
+                    ),
+                    # Subtitle with time info
+                    rx.hstack(
+                        rx.icon("clock", size=20, color="#10b981"),
+                        rx.text(
+                            "Available 5:30 PM - 8:30 PM",
+                            color="#f9fafb",
+                            font_size="1.1rem",
+                            font_weight="600",
+                        ),
+                        spacing="2",
+                        justify="center",
+                        padding="12px 24px",
+                        background="rgba(255, 255, 255, 0.1)",
+                        border_radius="25px",
+                        border="2px solid rgba(16, 185, 129, 0.5)",
+                        style={
+                            "backdrop_filter": "blur(10px)",
+                        },
+                    ),
+                    spacing="4",
+                    align="center",
+                ),
+                padding="60px 20px",
+                background="linear-gradient(180deg, #1f2937 0%, #374151 100%)",
+                width="100%",
+                style={
+                    "box_shadow": "0 4px 20px rgba(0, 0, 0, 0.3)",
+                },
             ),
 
             # Song Selection
@@ -118,116 +178,263 @@ def index() -> rx.Component:
                 heading="",
             ),
 
-            # Submit a Request
+            # Submit a Request Section
             rx.box(
                 rx.vstack(
-                    rx.heading(
-                        "Submit a Request",
-                        font_size="2rem",
-                        color="#333",
-                        margin_bottom="10px",
+                    # Section header with icon
+                    rx.hstack(
+                        rx.icon("mail", size=32, color="#dc2626"),
+                        rx.heading(
+                            "Request a New Song",
+                            font_size="2.5rem",
+                            font_weight="800",
+                            letter_spacing="-0.02em",
+                            line_height="1.3",
+                            padding="10px 0",
+                            style={
+                                "background": "linear-gradient(135deg, #dc2626 0%, #10b981 100%)",
+                                "background_clip": "text",
+                                "-webkit-background-clip": "text",
+                                "-webkit-text-fill-color": "transparent",
+                                "display": "inline-block",
+                            },
+                        ),
+                        spacing="3",
+                        justify="center",
+                        align="center",
+                        margin_bottom="15px",
+                        padding="10px 0",
+                        style={
+                            "overflow": "visible",
+                        },
                     ),
+                    rx.text(
+                        "Don't see your favorite song? Request it and we'll add it to our playlist!",
+                        color="#6b7280",
+                        text_align="center",
+                        font_size="1.1rem",
+                        margin_bottom="20px",
+                    ),
+                    # Text area with modern styling
                     rx.text_area(
-                        placeholder="Submit a song and leave your email to be notified when added.",
+                        placeholder="Enter song name and your email to be notified when it's added...",
                         value=State.song_request_text,
                         on_change=State.set_song_request_text,
                         width="100%",
+                        height="120px",
+                        font_size="16px",
+                        padding="15px",
+                        border_radius="12px",
+                        border="2px solid rgba(16, 185, 129, 0.3)",
+                        _focus={
+                            "border": "2px solid #10b981",
+                            "outline": "none",
+                            "box_shadow": "0 0 0 3px rgba(16, 185, 129, 0.1)",
+                        },
                     ),
+                    # Submit button with gradient
                     rx.button(
-                        "Submit",
+                        rx.hstack(
+                            rx.icon("send", size=20),
+                            rx.text("Submit Request", font_size="18px", font_weight="700"),
+                            spacing="2",
+                            align="center",
+                        ),
                         on_click=State.submit_request,
-                        width="150px",
-                        height="50px",
-                        font_size="20px",
-                        background_color="#d32f2f",
-                        color="#fff",
-                        border_radius="5px",
-                        font_weight="bold",
-                        _hover={"background_color": "#b61f1f"},
+                        width="100%",
+                        max_width="250px",
+                        height="60px",
+                        border_radius="12px",
                         cursor="pointer",
+                        style={
+                            "background": "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                            "color": "white",
+                            "box_shadow": "0 4px 20px rgba(16, 185, 129, 0.4)",
+                            "transition": "all 0.3s ease",
+                            "_hover": {
+                                "background": "linear-gradient(135deg, #059669 0%, #047857 100%)",
+                                "transform": "translateY(-2px)",
+                                "box_shadow": "0 6px 30px rgba(16, 185, 129, 0.5)",
+                            },
+                            "_active": {
+                                "transform": "translateY(0px)",
+                            },
+                        },
                     ),
-                    spacing="4",
+                    spacing="5",
+                    align="center",
                 ),
                 width="100%",
-                # max_width="600px",
-                margin="20px auto",
-                padding="30px",
-                background_color="#fff",
-                border_radius="10px",
-                box_shadow="0 0 20px rgba(0, 0, 0, 0.1)",
-                border="2px solid #d32f2f",
+                max_width="900px",
+                margin="40px auto",
+                padding="40px",
+                background="linear-gradient(135deg, #ffffff 0%, #f9fafb 100%)",
+                border_radius="20px",
+                box_shadow="0 10px 40px rgba(0, 0, 0, 0.1)",
+                border="2px solid rgba(220, 38, 38, 0.2)",
             ),
 
-            # User Song Queue
+            # Queues Section with Two Columns
             rx.box(
                 rx.vstack(
-                    rx.heading(
-                        "User Song Queue",
-                        font_size="2rem",
-                        color="#d32f2f",
-                        margin_bottom="20px",
-                        text_align="center",
-                    ),
-                    rx.list(
-                        rx.foreach(
-                            State.song_queue_requested,
-                            lambda song: rx.list_item(
-                                song,
-                                background_color="#fff",
-                                margin="10px 0",
-                                padding="15px",
-                                border_radius="8px",
-                                box_shadow="0 2px 4px rgba(0, 0, 0, 0.1)",
-                            ),
+                    # Section header
+                    rx.hstack(
+                        rx.icon("list-music", size=32, color="#10b981"),
+                        rx.heading(
+                            "Song Queues",
+                            font_size="2.5rem",
+                            font_weight="800",
+                            letter_spacing="-0.02em",
+                            line_height="1.3",
+                            padding="10px 0",
+                            style={
+                                "background": "linear-gradient(135deg, #dc2626 0%, #10b981 100%)",
+                                "background_clip": "text",
+                                "-webkit-background-clip": "text",
+                                "-webkit-text-fill-color": "transparent",
+                                "display": "inline-block",
+                            },
                         ),
+                        spacing="3",
+                        justify="center",
+                        align="center",
+                        margin_bottom="30px",
+                        padding="10px 0",
+                        style={
+                            "overflow": "visible",
+                        },
                     ),
-                    spacing="4",
+
+                    # Two column layout for queues
+                    rx.grid(
+                        # User Song Queue
+                        rx.box(
+                            rx.vstack(
+                                rx.hstack(
+                                    rx.icon("users", size=24, color="#dc2626"),
+                                    rx.heading(
+                                        "Requested Songs",
+                                        font_size="1.8rem",
+                                        color="#1f2937",
+                                        font_weight="700",
+                                    ),
+                                    spacing="2",
+                                    margin_bottom="15px",
+                                ),
+                                rx.box(
+                                    rx.list(
+                                        rx.foreach(
+                                            State.song_queue_requested,
+                                            lambda song: rx.box(
+                                                rx.hstack(
+                                                    rx.icon("music", size=18, color="#dc2626"),
+                                                    rx.text(
+                                                        song,
+                                                        color="#1f2937",
+                                                        font_size="16px",
+                                                        font_weight="500",
+                                                    ),
+                                                    spacing="2",
+                                                ),
+                                                padding="12px 16px",
+                                                margin="8px 0",
+                                                background="linear-gradient(135deg, #ffffff 0%, #fef2f2 100%)",
+                                                border_radius="10px",
+                                                border="1px solid rgba(220, 38, 38, 0.2)",
+                                                box_shadow="0 2px 8px rgba(0, 0, 0, 0.05)",
+                                                _hover={
+                                                    "background": "linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)",
+                                                    "transform": "translateX(4px)",
+                                                    "transition": "all 0.2s ease",
+                                                },
+                                            ),
+                                        ),
+                                    ),
+                                    max_height="400px",
+                                    overflow_y="auto",
+                                    width="100%",
+                                ),
+                                spacing="4",
+                            ),
+                            padding="30px",
+                            background="linear-gradient(135deg, #ffffff 0%, #f9fafb 100%)",
+                            border_radius="16px",
+                            box_shadow="0 8px 30px rgba(0, 0, 0, 0.08)",
+                            border="2px solid rgba(220, 38, 38, 0.2)",
+                        ),
+
+                        # System Song Queue
+                        rx.box(
+                            rx.vstack(
+                                rx.hstack(
+                                    rx.icon("radio", size=24, color="#10b981"),
+                                    rx.heading(
+                                        "System Playlist",
+                                        font_size="1.8rem",
+                                        color="#1f2937",
+                                        font_weight="700",
+                                    ),
+                                    spacing="2",
+                                    margin_bottom="15px",
+                                ),
+                                rx.box(
+                                    rx.list(
+                                        rx.foreach(
+                                            State.song_queue_system,
+                                            lambda song: rx.box(
+                                                rx.hstack(
+                                                    rx.icon("music", size=18, color="#10b981"),
+                                                    rx.text(
+                                                        song,
+                                                        color="#1f2937",
+                                                        font_size="16px",
+                                                        font_weight="500",
+                                                    ),
+                                                    spacing="2",
+                                                ),
+                                                padding="12px 16px",
+                                                margin="8px 0",
+                                                background="linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)",
+                                                border_radius="10px",
+                                                border="1px solid rgba(16, 185, 129, 0.2)",
+                                                box_shadow="0 2px 8px rgba(0, 0, 0, 0.05)",
+                                                _hover={
+                                                    "background": "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)",
+                                                    "transform": "translateX(4px)",
+                                                    "transition": "all 0.2s ease",
+                                                },
+                                            ),
+                                        ),
+                                    ),
+                                    max_height="400px",
+                                    overflow_y="auto",
+                                    width="100%",
+                                ),
+                                spacing="4",
+                            ),
+                            padding="30px",
+                            background="linear-gradient(135deg, #ffffff 0%, #f9fafb 100%)",
+                            border_radius="16px",
+                            box_shadow="0 8px 30px rgba(0, 0, 0, 0.08)",
+                            border="2px solid rgba(16, 185, 129, 0.2)",
+                        ),
+
+                        columns="2",
+                        spacing="5",
+                        width="100%",
+                    ),
+
+                    spacing="5",
                 ),
                 width="100%",
-                margin="20px auto",
-                padding="30px",
-                background_color="#e6e6e6",
-                border_radius="10px",
-                box_shadow="0 0 20px rgba(0, 0, 0, 0.1)",
-                border="2px solid #d32f2f",
+                max_width="1200px",
+                margin="40px auto",
+                padding="40px",
             ),
 
-            # System Song Queue
-            rx.box(
-                rx.vstack(
-                    rx.heading(
-                        "System Song Queue",
-                        font_size="2rem",
-                        color="#d32f2f",
-                        margin_bottom="20px",
-                        text_align="center",
-                    ),
-                    rx.list(
-                        rx.foreach(
-                            State.song_queue_system,
-                            lambda song: rx.list_item(
-                                song,
-                                background_color="#fff",
-                                margin="10px 0",
-                                padding="15px",
-                                border_radius="8px",
-                                box_shadow="0 2px 4px rgba(0, 0, 0, 0.1)",
-                            ),
-                        ),
-                    ),
-                    spacing="4",
-                ),
-                width="100%",
-                margin="20px auto",
-                padding="30px",
-                background_color="#e6e6e6",
-                border_radius="10px",
-                box_shadow="0 0 20px rgba(0, 0, 0, 0.1)",
-                border="2px solid #d32f2f",
-            ),
-            spacing="6",
+            spacing="0",
         ),
-        padding="20px",
-        background_color="#59c759",
+        min_height="100vh",
+        background="linear-gradient(180deg, #374151 0%, #4b5563 30%, #6b7280 60%, #9ca3af 100%)",
         on_mount=State.on_load,
     )
