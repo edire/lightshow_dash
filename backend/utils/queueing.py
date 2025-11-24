@@ -3,7 +3,7 @@ import threading
 import json
 import time
 import datetime
-from utils.fpp_commands import play_song
+from backend.utils.fpp_commands import play_song
 
 
 start_time = datetime.time(17, 30)
@@ -99,3 +99,7 @@ class SongQueueManager:
                 self.set_current_song(None)
             else:
                 time.sleep(2)
+
+
+# Create a global instance for the application to use
+song_queue_manager = SongQueueManager()

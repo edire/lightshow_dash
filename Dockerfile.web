@@ -1,21 +1,30 @@
-FROM python:3.12-slim AS builder
-
-RUN apt-get update && apt-get install -y curl unzip git && rm -rf /var/lib/apt/lists/*
+# Build stage - build the React app
+FROM node:20-slim AS builder
 
 WORKDIR /app
-COPY . .
 
-# COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
-# RUN --mount=type=cache,target=/root/.cache/uv \
-# uv sync --frozen
-# ENV PATH="/app/.venv/bin:$PATH"
+# Copy package files
+COPY frontend/package*.json ./
 
-RUN pip install -r requirements.txt
+# Install dependencies
+RUN npm ci
 
-RUN reflex export --frontend-only --no-zip
+# Copy the rest of the frontend code
+COPY frontend/ ./
 
-FROM nginx
+# Build the React app
+RUN npm run build
 
-# Try to copy from the actual location - adjust based on debug output above
-COPY --from=builder /app/.web/build/client /usr/share/nginx/html
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+# Production stage - serve with nginx
+FROM nginx:alpine
+
+# Copy the built React app from builder stage
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Copy custom nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 80
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

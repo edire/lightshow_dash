@@ -1,31 +1,32 @@
 
 services:
 
-  reflex-backend:
+  backend:
     build:
-      # context: ./app
+      context: .
       dockerfile: Dockerfile
     restart: unless-stopped
     expose:
       - "8000"
     env_file:
       - .env
+    environment:
+      - TZ=America/Phoenix
     volumes:
       - ./volume:/volume
+      - /etc/localtime:/etc/localtime:ro
 
-  reflex-frontend:
+  frontend:
     build:
-      # context: ./app
+      context: .
       dockerfile: Dockerfile.web
     restart: unless-stopped
     expose:
       - "80"
     ports:
       - "80:80"
-    env_file:
-      - .env
-    volumes:
-      - ./volume:/volume
+    depends_on:
+      - backend
 
   cloudflared:
     image: cloudflare/cloudflared:latest
@@ -34,5 +35,5 @@ services:
       - /home/edire/.cloudflared:/etc/cloudflared
     restart: unless-stopped
     depends_on:
-      - reflex-backend
-      - reflex-frontend
+      - backend
+      - frontend
