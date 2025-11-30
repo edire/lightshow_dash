@@ -23,8 +23,8 @@ services:
     restart: unless-stopped
     expose:
       - "80"
-    ports:
-      - "80:80"
+    # ports:
+    #   - "80:80"
     depends_on:
       - backend
 
@@ -32,7 +32,7 @@ services:
     image: cloudflare/cloudflared:latest
     command: tunnel --config /etc/cloudflared/config_christmas.yml run
     volumes:
-      - /home/edire/.cloudflared:/etc/cloudflared
+      - /home/edire/.cloudflared_dire:/etc/cloudflared
     restart: unless-stopped
     depends_on:
       - backend
