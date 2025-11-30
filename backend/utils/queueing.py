@@ -6,8 +6,8 @@ import datetime
 from backend.utils.fpp_commands import play_song
 
 
-start_time = datetime.time(17, 30)
-end_time = datetime.time(20, 35)
+start_time = datetime.time(17, 00)
+end_time = datetime.time(20, 31)
 
 
 def get_song_list():
