@@ -17,7 +17,7 @@ def play_song(song_file):
         return
     lights_off()
     time.sleep(1)
-    url = f'http://{FPP_IP}/api/playlist/{song_file}/start'
+    url = f'http://{FPP_IP}/api/playlist/{song_file}.fseq/start'
     requests.get(url, auth=(FPP_UID, FPP_PWD))
     while is_busy():
         time.sleep(2)
