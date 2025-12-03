@@ -30,9 +30,9 @@ services:
 
   cloudflared:
     image: cloudflare/cloudflared:latest
-    command: tunnel --config /etc/cloudflared/config_christmas.yml run
+    command: tunnel --config /etc/cloudflared/${CLOUDFLARE_CONFIG} run
     volumes:
-      - /home/edire/.cloudflared:/etc/cloudflared
+      - ${CLOUDFLARE_DIRECTORY}:/etc/cloudflared
     restart: unless-stopped
     depends_on:
       - backend

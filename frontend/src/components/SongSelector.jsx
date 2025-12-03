@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Music } from 'lucide-react';
 
-const SongSelector = ({ songs, onSelect, flashMessage }) => {
+const SongSelector = ({ songs, onSelect }) => {
     const [selectedSong, setSelectedSong] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -30,12 +30,6 @@ const SongSelector = ({ songs, onSelect, flashMessage }) => {
                 <h2>Choose Your Song</h2>
                 <p className="subtitle">Select from our collection of holiday favorites</p>
             </div>
-
-            {flashMessage && (
-                <div className="flash-message">
-                    {flashMessage}
-                </div>
-            )}
 
             <div className="search-box">
                 <Search size={20} />

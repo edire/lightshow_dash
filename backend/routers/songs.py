@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 import os
 import datetime as dt
-from demail.gmail import SendEmail
+import httpx
 
 from backend.utils.queueing import song_queue_manager, get_song_list, check_time
 
@@ -106,15 +106,23 @@ async def submit_custom_request(request: CustomSongRequest):
         )
     
     try:
-        # Send email
-        SendEmail(
-            to_email_addresses=os.getenv('EMAIL_ADDRESS'),
-            subject='LightshowPi Song Request',
-            body=request.request_text,
-            user=os.getenv('EMAIL_UID'),
-            password=os.getenv('EMAIL_PWD')
-        )
-        
+        # Send to N8N webhook
+        webhook_url = os.getenv('N8N_WEBHOOK_URL')
+        token = os.getenv('N8N_TOKEN')
+
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                webhook_url,
+                json={
+                    "subject": "LightshowPi Song Request",
+                    "request": request.request_text
+                },
+                headers={
+                    "Authorization": f"Bearer {token}"
+                }
+            )
+            response.raise_for_status()
+
         return {
             "message": "Your request has been submitted. Please check back at a later date."
         }

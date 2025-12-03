@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import SongSelector from '../components/SongSelector';
+import Toast from '../components/Toast';
 import api from '../services/api';
 
 const Admin = () => {
@@ -122,6 +123,12 @@ const Admin = () => {
 
     return (
         <div className="admin-page">
+            {/* Toast Notification */}
+            <Toast
+                message={flashMessage}
+                onClose={() => setFlashMessage('')}
+            />
+
             {/* Navigation */}
             <div className="admin-nav">
                 <Link to="/" className="nav-btn">
@@ -140,12 +147,6 @@ const Admin = () => {
                     <h1>Admin Control Panel</h1>
                     <p className="admin-subtitle">Welcome, {user?.name}</p>
                 </div>
-
-                {flashMessage && (
-                    <div className="flash-message admin-flash">
-                        {flashMessage}
-                    </div>
-                )}
 
                 {/* Control Buttons */}
                 <div className="control-section glass-card">
@@ -270,7 +271,6 @@ const Admin = () => {
                     <SongSelector
                         songs={songs}
                         onSelect={handleAddSong}
-                        flashMessage=""
                     />
                 </div>
             </div>

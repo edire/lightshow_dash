@@ -6,15 +6,12 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "apscheduler>=3.11.1",
-    "demail",
     "fastapi==0.121.1",
     "google-auth==2.41.1",
     "google-auth-oauthlib==1.2.3",
+    "httpx>=0.28.1",
     "python-multipart==0.0.20",
     "requests==2.32.5",
     "requests-oauthlib==2.0.0",
     "uvicorn[standard]==0.34.0",
 ]
-
-[tool.uv.sources]
-demail = { git = "https://github.com/edire/demail.git", rev = "8649c5fc3ef47f85caca0fa51baeca4384b55d97" }

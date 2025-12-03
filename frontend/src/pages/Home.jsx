@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, TreePine, Clock, Send, ShieldCheck } from 'lucide-react';
 import SongSelector from '../components/SongSelector';
+import Toast from '../components/Toast';
 import api from '../services/api';
 
 const Home = () => {
@@ -85,6 +86,12 @@ const Home = () => {
 
     return (
         <div className="page-container">
+            {/* Toast Notification */}
+            <Toast
+                message={flashMessage}
+                onClose={() => setFlashMessage('')}
+            />
+
             {/* Admin Button */}
             <Link to="/admin" className="admin-link">
                 <button className="btn-ghost">
@@ -117,7 +124,6 @@ const Home = () => {
                     <SongSelector
                         songs={songs}
                         onSelect={handleSongSelect}
-                        flashMessage={flashMessage}
                     />
                 </div>
 
