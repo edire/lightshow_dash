@@ -47,9 +47,9 @@ async def startup_event():
 
     # Schedule lights on/off
     scheduler.add_job(lights_on, CronTrigger(hour=17, minute=0))  # 5:00 PM
-    scheduler.add_job(lights_off, CronTrigger(hour=21, minute=0))  # 9:00 PM
+    scheduler.add_job(lights_off, CronTrigger(hour=23, minute=0))  # 11:00 PM
     scheduler.start()
-    print("[STARTUP] Light scheduler started (ON: 5:00 PM, OFF: 9:00 PM)")
+    print("[STARTUP] Light scheduler started (ON: 5:00 PM, OFF: 11:00 PM)")
 
 
 @app.on_event("shutdown")
@@ -66,3 +66,20 @@ async def health_check():
         "status": "healthy",
         "service": "christmas-lightshow-api"
     }
+
+
+@app.get("/api/banner")
+async def get_banner():
+    """Get banner content from banner.md file."""
+    banner_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "banner.md")
+
+    try:
+        if os.path.exists(banner_path):
+            with open(banner_path, 'r', encoding='utf-8') as f:
+                content = f.read().strip()
+            return {"content": content if content else None}
+        else:
+            return {"content": None}
+    except Exception as e:
+        print(f"[ERROR] Failed to read banner: {e}")
+        return {"content": None}

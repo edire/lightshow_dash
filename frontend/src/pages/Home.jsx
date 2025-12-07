@@ -15,10 +15,12 @@ const Home = () => {
         current_song: null
     });
     const [songRequestText, setSongRequestText] = useState('');
+    const [bannerContent, setBannerContent] = useState(null);
 
     useEffect(() => {
         loadSongs();
         loadQueueStatus();
+        loadBanner();
 
         // Poll queue status every 5 seconds
         const interval = setInterval(loadQueueStatus, 5000);
@@ -40,6 +42,15 @@ const Home = () => {
             setQueueStatus(response.data);
         } catch (error) {
             console.error('Failed to load queue status:', error);
+        }
+    };
+
+    const loadBanner = async () => {
+        try {
+            const response = await api.get('/banner');
+            setBannerContent(response.data.content);
+        } catch (error) {
+            console.error('Failed to load banner:', error);
         }
     };
 
@@ -118,6 +129,17 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* Banner */}
+                {bannerContent && (
+                    <div className="banner-section">
+                        <div className="banner-content">
+                            {bannerContent.split('\n').map((line, index) => (
+                                <p key={index}>{line}</p>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {/* Song Selection */}
                 <div className="song-selection-section">

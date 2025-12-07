@@ -245,6 +245,37 @@ input::placeholder, textarea::placeholder {
   color: var(--color-secondary);
 }
 
+/* Banner Section */
+.banner-section {
+  max-width: 1000px;
+  margin: 0 auto 60px;
+  padding: 0 20px;
+}
+
+.banner-content {
+  background: linear-gradient(135deg, rgba(255, 0, 0, 0.15) 0%, rgba(0, 255, 0, 0.15) 100%);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 24px 32px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.banner-content p {
+  color: var(--color-text-primary);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 8px 0;
+  font-weight: 500;
+}
+
+.banner-content p:first-child {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-secondary);
+}
+
 /* Song Selection */
 .song-selection-section {
   max-width: 1000px;
@@ -898,6 +929,18 @@ input::placeholder, textarea::placeholder {
 @media (max-width: 768px) {
   .hero-title {
     font-size: 3rem;
+  }
+
+  .banner-content {
+    padding: 20px 24px;
+  }
+
+  .banner-content p {
+    font-size: 1rem;
+  }
+
+  .banner-content p:first-child {
+    font-size: 1.15rem;
   }
 
   .song-selector {

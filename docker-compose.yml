@@ -15,6 +15,7 @@ services:
     volumes:
       - ./volume:/volume
       - /etc/localtime:/etc/localtime:ro
+      - ./banner.md:/app/banner.md:ro
 
   frontend:
     build:
