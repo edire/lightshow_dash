@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import api from '../services/api';
+import api, { setAccessToken, clearAccessToken } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -16,47 +16,37 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check if user is already authenticated
+        // On initial load, try to refresh token using HttpOnly cookie
         const checkAuth = async () => {
-            const accessToken = localStorage.getItem('access_token');
-            const refreshToken = localStorage.getItem('refresh_token');
-
-            if (!accessToken && !refreshToken) {
+            // Skip if we're on the login or callback pages
+            if (window.location.pathname.includes('/login') ||
+                window.location.pathname.includes('/oauth-callback')) {
                 setLoading(false);
                 return;
             }
 
-            // If we have a refresh token but no access token, try to refresh
-            if (!accessToken && refreshToken) {
-                try {
-                    const response = await api.post('/auth/refresh', { refresh_token: refreshToken });
-                    const { access_token, user_email, user_name, user_picture } = response.data;
-                    localStorage.setItem('access_token', access_token);
-                    setUser({
-                        email: user_email,
-                        name: user_name,
-                        picture: user_picture
-                    });
-                } catch (error) {
-                    console.error('Failed to refresh token:', error);
-                    localStorage.removeItem('refresh_token');
-                }
-            } else if (accessToken) {
-                // Verify the access token is still valid
-                try {
-                    const response = await api.get('/auth/me');
-                    setUser({
-                        email: response.data.email,
-                        name: response.data.name,
-                        picture: response.data.picture
-                    });
-                } catch (error) {
-                    console.error('Failed to verify token:', error);
-                    // Token will be refreshed by interceptor if refresh token exists
-                }
-            }
+            try {
+                // Attempt to refresh - cookie is sent automatically
+                const response = await api.post('/auth/refresh');
+                const { access_token } = response.data;
 
-            setLoading(false);
+                // Store in memory
+                setAccessToken(access_token);
+
+                // Get user info
+                const userResponse = await api.get('/auth/me');
+                setUser({
+                    email: userResponse.data.email,
+                    name: userResponse.data.name,
+                    picture: userResponse.data.picture || ''
+                });
+            } catch (error) {
+                // No valid session, user needs to login
+                console.log('No active session');
+                clearAccessToken();
+            } finally {
+                setLoading(false);
+            }
         };
 
         checkAuth();
@@ -64,41 +54,32 @@ export const AuthProvider = ({ children }) => {
 
     const login = async () => {
         try {
-            const response = await api.get('/auth/login');
-            const { authorization_url, state } = response.data;
-
-            // Store state for verification
-            localStorage.setItem('oauth_state', state);
+            // Get login URL from backend
+            const response = await api.get('/auth/login-url');
+            const { url } = response.data;
 
             // Redirect to Google OAuth
-            window.location.href = authorization_url;
+            window.location.href = url;
         } catch (error) {
             console.error('Login failed:', error);
             throw error;
         }
     };
 
-    const handleCallback = async (code, state) => {
+    const handleCallback = async (code) => {
         try {
-            const storedState = localStorage.getItem('oauth_state');
+            // Exchange code for tokens
+            const response = await api.get(`/auth/callback?code=${code}`);
+            const { access_token, user: userData } = response.data;
 
-            if (state !== storedState) {
-                throw new Error('Invalid state parameter');
-            }
+            // Store access token in memory
+            setAccessToken(access_token);
 
-            const response = await api.post('/auth/callback', { code, state });
-            const { access_token, refresh_token, user_email, user_name, user_picture } = response.data;
-
-            localStorage.setItem('access_token', access_token);
-            if (refresh_token) {
-                localStorage.setItem('refresh_token', refresh_token);
-            }
-            localStorage.removeItem('oauth_state');
-
+            // Set user data
             setUser({
-                email: user_email,
-                name: user_name,
-                picture: user_picture
+                email: userData.email,
+                name: userData.name,
+                picture: userData.picture || ''
             });
 
             return true;
@@ -114,8 +95,8 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             console.error('Logout request failed:', error);
         } finally {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
+            // Clear in-memory token
+            clearAccessToken();
             setUser(null);
         }
     };

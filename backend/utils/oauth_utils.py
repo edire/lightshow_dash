@@ -65,6 +65,39 @@ def get_authorization_url() -> tuple[str, str]:
     return authorization_url, state
 
 
+def exchange_code_for_tokens_google(code: str) -> dict:
+    """
+    Exchange authorization code for Google user info.
+    Returns dict with: email, name, picture
+    Raises: Exception on failure
+    """
+    try:
+        flow = create_oauth_flow()
+        flow.fetch_token(code=code)
+
+        credentials = flow.credentials
+
+        # Get user info
+        userinfo_endpoint = 'https://www.googleapis.com/oauth2/v2/userinfo'
+        headers = {'Authorization': f'Bearer {credentials.token}'}
+        response = requests.get(userinfo_endpoint, headers=headers)
+
+        if response.status_code != 200:
+            raise Exception(f"Failed to get user info: {response.status_code}")
+
+        user_info = response.json()
+
+        return {
+            'email': user_info.get('email', ''),
+            'name': user_info.get('name', ''),
+            'picture': user_info.get('picture', '')
+        }
+
+    except Exception as e:
+        print(f"[AUTH] Error exchanging code for tokens: {e}")
+        raise
+
+
 def exchange_code_for_tokens(code: str, state: str) -> dict:
     """
     Exchange authorization code for access and refresh tokens.

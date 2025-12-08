@@ -17,7 +17,6 @@ const OAuthCallback = () => {
             processedRef.current = true;
 
             const code = searchParams.get('code');
-            const state = searchParams.get('state');
             const errorParam = searchParams.get('error');
 
             if (errorParam) {
@@ -26,14 +25,14 @@ const OAuthCallback = () => {
                 return;
             }
 
-            if (!code || !state) {
-                setError('Missing required parameters');
+            if (!code) {
+                setError('Missing authorization code');
                 setTimeout(() => navigate('/login'), 3000);
                 return;
             }
 
             try {
-                await handleCallback(code, state);
+                await handleCallback(code);
                 // Redirect to admin page after successful authentication
                 navigate('/admin');
             } catch (err) {
