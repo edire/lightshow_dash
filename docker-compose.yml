@@ -26,6 +26,7 @@ services:
       - ./volume:/volume
       - /etc/localtime:/etc/localtime:ro
       - ./banner.md:/app/banner.md:ro
+      - ./songs.json:/app/songs.json:ro
     depends_on:
       - redis
 
