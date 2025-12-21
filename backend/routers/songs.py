@@ -77,12 +77,35 @@ async def request_song(request: SongRequest):
     try:
         # Add to requested queue
         song_queue_manager.add_song(request.song, "requested")
-        
+
         # Log the request
         with open('song_requests.txt', 'a') as f:
             timestamp = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             f.write(f"{timestamp} - {request.song}\n")
-        
+
+        # Send webhook notification to N8N
+        try:
+            webhook_url = os.getenv('N8N_WEBHOOK_URL_PLAYEDAUDIO')
+            token = os.getenv('N8N_TOKEN')
+
+            if webhook_url and token:
+                async with httpx.AsyncClient() as client:
+                    await client.post(
+                        webhook_url,
+                        json={
+                            "song": request.song,
+                            "timestamp": dt.datetime.now().isoformat(),
+                            "queue_type": "requested"
+                        },
+                        headers={
+                            "Authorization": f"Bearer {token}"
+                        },
+                        timeout=5.0
+                    )
+        except Exception as webhook_error:
+            # Log webhook errors but don't fail the request
+            print(f"Webhook notification failed: {webhook_error}")
+
         return {
             "message": f"Your song '{request.song}' has been added to the queue!",
             "song": request.song
