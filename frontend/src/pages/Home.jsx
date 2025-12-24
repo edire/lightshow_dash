@@ -197,7 +197,7 @@ const Home = () => {
                         </p>
 
                         <textarea
-                            placeholder="Enter song name and your email..."
+                            placeholder="Enter song name and artist, include your email if you wish to be notified..."
                             value={songRequestText}
                             onChange={(e) => setSongRequestText(e.target.value)}
                             className="request-textarea"
