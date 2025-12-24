@@ -1,3 +1,3 @@
-Songs on the workbench:
-Golden by KPop - by request
+Song(s) on the workbench:
 Candy Cane Lane
+TSO - A Mad Russians Christmas
