@@ -125,7 +125,7 @@ const Home = () => {
 
                         <div className="time-badge">
                             <Clock size={20} />
-                            <span>Available 5:00 PM - 8:30 PM</span>
+                            <span>Available 5:00 PM - 9:00 PM</span>
                         </div>
                     </div>
                 </div>

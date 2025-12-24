@@ -71,7 +71,7 @@ async def request_song(request: SongRequest):
     if not check_time():
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Current time is outside the allowed range of 5:00 PM - 8:30 PM"
+            detail="Current time is outside the allowed range of 5:00 PM - 9:00 PM"
         )
     
     try:
